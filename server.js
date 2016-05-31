@@ -1,51 +1,118 @@
+var express = require('express');
+var morgan = require('morgan');
+var bodyparser = require('body-parser')
+var path = require('path')
+
+var app = express();
+var PORT = process.env.PORT || 80;
+
+app.use(morgan('dev'));
+
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({extended: true}));
+app.use(bodyparser.text());
+app.use(bodyparser.json({type:'application/vnd.api+json'}));
+app.use(express.static('public'));
+
+var mongoose = require('mongoose');
+
+//Database configuration
+mongoose.connect('mongodb://localhost/MagicScraperDB');
+var db = mongoose.connection;
+
+
+
 var request = require('request');
 var cheerio = require('cheerio');
 
-// Reddit
-request('https://magic.wizards.com/en/content/articles', function (error, response, html) {
+var Article = require('./models/article.js')
+var Comment = require('./models/comment.js')
 
-	var $ = cheerio.load(html);
-	// var result = [];
-	// $('div.article').each(function(i, element){
+app.get('/', function(req, res){
 
-	//     var title = $(this).text();
-	//     // var link = $(element).children().attr('href');
-	  
-	//     result.push({
-	//       title:title,
-	//       // link:link
-	//     });
-	//   });
-	// console.log(result);
-	// var title = $('.article .title').text()
-	// var description = $('.article .infos p').text()
-	// console.log(title)
-	// console.log(description)
+	res.sendFile(path.join(__dirname+'/public/index.html'));
 
-	$('.article').not('#date-picker').not('#card-day').each(function(i, element){
-
-		var category = $(element).children('.wrap').children('.details').children('.cat').text()
-		var date = $(element).children('.wrap').children('.details').children('.date').text()
-		var title = $(element).children('.wrap').children('.details').children('.title').text()
-		var author = $(element).children('.wrap').children('.details').children('.auth').text()
-		var description = $(element).children('.wrap').children('.details').children('.infos').children('p').first().text().trim()
-		var imgURL = $(element).children('.wrap').children('.visual').css('background-image')
-		imgURL = imgURL.replace('url(','').replace(')','');
-		var link = 'https://magic.wizards.com' + $(element).children('.wrap').children('.details').children('.infos').children('p').children('a').attr('href')
+});
 
 
-		console.log('-----')
-		console.log('Category: ' + category)
-		console.log('Date: ' + date)
-		console.log('Title: ' + title)
-		console.log('Author: ' + author)
-		console.log('Description: ' + description)
-		console.log('Image URL: ' + imgURL)
-		console.log('Article URL: ' + link)
-		console.log('-----')
+
+app.get('/api', function(req, res){
+
+	var stuffs = []
+
+	// Reddit
+	request('https://magic.wizards.com/en/content/articles', function (error, response, html) {
+
+		var $ = cheerio.load(html);
+
+		$('.article').not('#date-picker').not('#card-day').each(function(i, element){
+
+			var category = $(element).children('.wrap').children('.details').children('.cat').text()
+			var date = $(element).children('.wrap').children('.details').children('.date').text()
+			var title = $(element).children('.wrap').children('.details').children('.title').text()
+			var author = $(element).children('.wrap').children('.details').children('.auth').text()
+			var description = $(element).children('.wrap').children('.details').children('.infos').children('p').first().text().trim()
+			var imgURL = $(element).children('.wrap').children('.visual').css('background-image')
+			imgURL = imgURL.replace('url(','').replace(')','');
+			var link = 'https://magic.wizards.com' + $(element).children('.wrap').children('.details').children('.infos').children('p').children('a').attr('href')
+
+			var newArticle = new Article({
+				category: category,
+				date: date,
+				title: title,
+				author: author,
+				description: description,
+				imgURL: imgURL,
+				link: link
+			})
+			newArticle.save(function(err, doc) {
+				if (err) {
+					console.log(err);
+			  	} else {
+			    	console.log(doc);
+			  	}
+			});
+
+			// var obj = {
+			// 	category, date, title, author, description, imgURL, link
+			// }
+
+			// var newArticle = new Article({obj})
+
+			
+
+			// stuffs.push(obj)
+
+			// console.log('+++++')
+			// console.log(obj)
+			// console.log('+++++')
+
+
+			// console.log('-----')
+			// console.log('Category: ' + category)
+			// console.log('Date: ' + date)
+			// console.log('Title: ' + title)
+			// console.log('Author: ' + author)
+			// console.log('Description: ' + description)
+			// console.log('Image URL: ' + imgURL)
+			// console.log('Article URL: ' + link)
+			// console.log('-----')
+
+		});
+
+		Article.find({}, function(err, docs){
+			if (err) {
+	          	res.send(err);
+	        } else {
+	          	res.json(docs);
+	        }
+		})
 
 	});
 
 });
 
 
+app.listen(PORT, function(){
+	console.log("App is now listening on PORT: " + PORT);
+});

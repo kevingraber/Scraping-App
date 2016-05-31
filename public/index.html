@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Magic Page!</title>
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-rc1/jquery.min.js"></script>
+	<!-- Compiled and minified CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+	<!-- Compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+	<!-- Icons -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<body>
+
+<div class='container'>
+	<div class='row'>
+		<div class='col s12'>
+			<h1>Magic Articles!</h1>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col s12'>
+			<h5>Content!</h5>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col s3 imgDiv z-depth-1'>
+		</div>
+		<div class='col s9 z-depth-1 content'>
+			<h5>Content!</h5>
+		</div>
+		<div class='row'>
+			<div class='col s12'>
+				 <ul class="collapsible" data-collapsible="accordion">
+				    <li>
+				      <div class="collapsible-header"><i class="material-icons">subject</i>Comments</div>
+				      <div class="collapsible-body"><p>Lorem ipsum dolor sit amet.</p></div>
+				    </li>
+				  </ul>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<style type="text/css">
+	
+	.imgDiv {
+		height:200px;
+		/*width:250px;*/
+		background-image: url(http://magic.wizards.com/sites/mtg/files/images/hero/Y5pS8bxiXG_icon.jpg);
+		background-position: 50% 0;
+		background-repeat: no-repeat;
+   		overflow: hidden;
+	}
+
+	.content {
+		height: auto;
+	}
+
+</style>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+	    $('.collapsible').collapsible({
+	      	accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+	    });
+
+		var originURL = document.location.origin;
+		$.ajax({url: originURL + '/api', method: 'GET'}).done(function(response){
+			console.log(response)
+		})
+
+	})
+
+</script>
+
+</body>
+</html>
