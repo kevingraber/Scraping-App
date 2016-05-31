@@ -2,7 +2,7 @@ var request = require('request');
 var cheerio = require('cheerio');
 
 // Reddit
-request('http://magic.wizards.com/en/content/articles', function (error, response, html) {
+request('https://magic.wizards.com/en/content/articles', function (error, response, html) {
 
 	var $ = cheerio.load(html);
 	// var result = [];
@@ -28,7 +28,11 @@ request('http://magic.wizards.com/en/content/articles', function (error, respons
 		var date = $(element).children('.wrap').children('.details').children('.date').text()
 		var title = $(element).children('.wrap').children('.details').children('.title').text()
 		var author = $(element).children('.wrap').children('.details').children('.auth').text()
-		var description = $(element).children('.wrap').children('.details').children('.infos').children('p').text()
+		var description = $(element).children('.wrap').children('.details').children('.infos').children('p').first().text().trim()
+		var imgURL = $(element).children('.wrap').children('.visual').css('background-image')
+		imgURL = imgURL.replace('url(','').replace(')','');
+		var link = 'https://magic.wizards.com' + $(element).children('.wrap').children('.details').children('.infos').children('p').children('a').attr('href')
+
 
 		console.log('-----')
 		console.log('Category: ' + category)
@@ -36,10 +40,11 @@ request('http://magic.wizards.com/en/content/articles', function (error, respons
 		console.log('Title: ' + title)
 		console.log('Author: ' + author)
 		console.log('Description: ' + description)
+		console.log('Image URL: ' + imgURL)
+		console.log('Article URL: ' + link)
 		console.log('-----')
 
-
-	})
+	});
 
 });
 
