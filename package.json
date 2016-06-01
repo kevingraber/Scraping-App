@@ -2,7 +2,7 @@
   "name": "scraping-app",
   "version": "1.0.0",
   "description": "This app uses Cheerio and Node.js to scrape info off a website.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
