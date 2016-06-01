@@ -38,6 +38,16 @@ app.get('/', function(req, res){
 
 app.get('/api', function(req, res){
 
+	// db.animals.find().sort({"name": 1})
+
+	Article.find({}).sort({date: -1}).exec(function(err, docs){
+		if (err) {
+          	res.send(err);
+        } else {
+          	res.json(docs);
+        }
+	})
+
 	var stuffs = []
 
 	// Reddit
@@ -100,17 +110,45 @@ app.get('/api', function(req, res){
 
 		});
 
-		Article.find({}, function(err, docs){
-			if (err) {
-	          	res.send(err);
-	        } else {
-	          	res.json(docs);
-	        }
-		})
+		// Article.find({}, function(err, docs){
+		// 	if (err) {
+	 //          	res.send(err);
+	 //        } else {
+	 //          	res.json(docs);
+	 //        }
+		// })
 
 	});
 
 });
+
+app.get('/api/:id', function(req,res){
+	console.log('[[[[[[]]]]]]]]]]]')
+	console.log(req.params.id)
+	Article.findById(req.params.id)
+		.populate('comments')
+		.exec(function(err, doc) {
+			if (err) {
+				res.send(err);
+			} else {
+				res.json(doc);
+				// console.log(doc)
+			}
+		});
+})
+
+// app.get('/api/:id', function(req, res){
+// 	Article.findOne({'_id': req.params.id})
+// 	.populate('comments')
+// 	.exec(function(err, doc){
+// 		if (err){
+// 			console.log(err);
+// 		} else {
+// 			console.log(doc)
+// 			// res.json(doc);
+// 		}
+// 	});
+// });
 
 
 app.listen(PORT, function(){
