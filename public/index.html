@@ -50,7 +50,44 @@
 		<div class="modal-footer">
 			<a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
 		</div>
-  </div>
+ 	</div>
+
+ 	<!-- Modal 2 Structure -->
+	<div id="modal2" class="modal bottom-sheet">
+		<div class="modal-content">
+			<h4>Write A Comment!</h4>
+
+			<div class="row">
+
+				<form class="col s12">
+
+					<div class="row">
+			        	<div class="input-field col s12">
+			        		<i class="material-icons prefix">account_circle</i>
+			        		<input placeholder="Name" id="name" type="text" class="validate">
+			       		</div>
+			      	</div>
+
+			  	    <div class="row">
+			    	    <div class="input-field col s12">
+			    	    <i class="material-icons prefix">comment</i>
+			        	  	<textarea placeholder="Comment" id="comment" class="materialize-textarea"></textarea>
+			        	</div>
+			      	</div>
+
+			      	<button class="waves-effect waves-light btn" id="commentButton">button</button>
+
+				</form>
+
+			</div>
+
+			
+			
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+		</div>
+ 	</div>
 	
 </div>
 
@@ -120,7 +157,8 @@
 				contentdiv.append('<p class="author">' + response[i].author + '</p>')
 				contentdiv.append('<p>' + response[i].description + '</p>')
 				contentdiv.append('<a href="'+response[i].link+'" target="_blank">Read more...</a>')
-				contentdiv.append('<br><a class="modal-trigger" data-id="'+response[i]._id+'" href="#modal1">'+response[i].comments.length+' Comments</a>')
+				contentdiv.append('<br><a class="modal-trigger getComments" data-id="'+response[i]._id+'" href="#modal1">'+response[i].comments.length+' Comments</a>')
+				contentdiv.append('<a class="modal-trigger makeComment" data-id="'+response[i]._id+'" href="#modal2"> Comment</a>')
 
 				row.append(imgdiv)
 				row.append(contentdiv)
@@ -133,7 +171,7 @@
 
 			}
 
-			$('.modal-trigger').click(function(){
+			$('.getComments').click(function(){
 				$.ajax({url: originURL + '/api/'+ $(this).attr('data-id'), method: 'GET'}).done(function(res){
 
 					console.log('comments!!!!1')
@@ -142,12 +180,33 @@
 					$('#commentArea').empty()
 
 					for( var i = 0; i < res.comments.length; i++ ){
-						$('#commentArea').append(res.comments[i].author)
-						$('#commentArea').append(res.comments[i].body)
-					}
+						$('#commentArea').append('<p>' + res.comments[i].author + ': ' + res.comments[i].body + '</p>')
+					};
 
 				})
 				// alert($(this).attr('data-id'))
+			})
+
+			$('.makeComment').click(function(){
+				$('#name').val(null)
+				$('#comment').val(null)
+				$('#commentButton').attr('data-id', $(this).attr('data-id'))
+			})
+
+			$('#commentButton').click(function(){
+
+				var commentInfo = {
+					articleID: $(this).attr('data-id'),
+					author: $('#name').val().trim(),
+					body: $('#comment').val().trim()
+				}
+
+				console.log(commentInfo)
+
+				$.post(originURL + '/comment', commentInfo).done(function(data){
+
+				})
+
 			})
 			
 

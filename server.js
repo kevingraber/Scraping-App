@@ -150,6 +150,31 @@ app.get('/api/:id', function(req,res){
 // 	});
 // });
 
+app.post('/comment', function(req,res){
+	console.log('==========+++++================')
+	console.log(req.body)
+	// res.send('k!')
+	var newComment = new Comment({
+		author: req.body.author,
+		body: req.body.body
+	});
+	newComment.save(function(err, doc) {
+		if (err) {
+			console.log(err);
+	  	} else {
+	    	Article.findOneAndUpdate({'_id': req.body.articleID}, {$push:{"comments":doc._id}})
+			.exec(function(err, artdoc){
+				if (err){
+					console.log(err);
+				} else {
+					console.log(artdoc);
+				}
+			});
+	  	}
+	});
+
+})
+
 
 app.listen(PORT, function(){
 	console.log("App is now listening on PORT: " + PORT);
