@@ -17,7 +17,8 @@ app.use(express.static('public'));
 var mongoose = require('mongoose');
 
 //Database configuration
-mongoose.connect('mongodb://localhost/MagicScraperDB');
+mongoose.connect('mongodb://mongokevin:mongokevin@ds013192.mlab.com:13192/heroku_pmgpw7g6')
+// mongoose.connect('mongodb://localhost/MagicScraperDB');
 var db = mongoose.connection;
 
 
